@@ -39,7 +39,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
       { path: 'todo', component: TodoComponent, canActivate: [AuthorizeGuard] },
-      { path: 'person', component: PersonComponent },
+      { path: 'person', component: PersonComponent, canActivate: [AuthorizeGuard] },
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot()

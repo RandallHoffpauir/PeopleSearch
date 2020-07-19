@@ -31,6 +31,7 @@ namespace PeopleSearch.Infrastructure.Persistence
 
         public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<Person> Persons { get; set; }
+        public DbSet<PersonInterest> PersonInterests { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {

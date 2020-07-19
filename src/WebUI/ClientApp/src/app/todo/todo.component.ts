@@ -63,7 +63,7 @@ export class TodoComponent {
             items: [],
         });
 
-        this.listsClient.create(<CreateTodoListCommand>{ title: this.newListEditor.title }).subscribe(
+        this.listsClient.create(<CreateTodoListCommand>(({ title: this.newListEditor.title }) as any)).subscribe(
             result => {
                 list.id = result;
                 this.vm.lists.push(list);

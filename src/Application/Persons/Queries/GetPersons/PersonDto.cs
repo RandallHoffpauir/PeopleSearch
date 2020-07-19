@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PeopleSearch.Application.Common.Mappings;
+using PeopleSearch.Domain.Entities;
 
 namespace PeopleSearch.Application.Persons.Queries.GetPersons
 {
-    public class PersonDto
+    public class PersonDto : IMapFrom<Person>
     {
+        public PersonDto()
+        {
+            Interests = new List<PersonInterestDto>();
+        }
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -17,6 +23,7 @@ namespace PeopleSearch.Application.Persons.Queries.GetPersons
 
         public DateTime BirthDate { get; set; }
 
+        public IList<PersonInterestDto> Interests { get; set; }
 
     }
 }

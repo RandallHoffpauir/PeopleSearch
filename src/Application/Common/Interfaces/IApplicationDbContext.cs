@@ -13,6 +13,7 @@ namespace PeopleSearch.Application.Common.Interfaces
 
         DbSet<Person> Persons { get; set; }
 
+        DbSet<PersonInterest> PersonInterests { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

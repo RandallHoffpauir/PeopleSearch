@@ -7,6 +7,11 @@ namespace PeopleSearch.Domain.Entities
 {
     public class Person : AuditableEntity
     {
+        public Person()
+        {
+            Interests = new List<PersonInterest>();
+        }
+
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -19,5 +24,7 @@ namespace PeopleSearch.Domain.Entities
         public DateTime BirthDate { get; set; }
 
         public byte[] Photo { get; set; }
+
+        public IList<PersonInterest> Interests{ get; set; }
     }
 }

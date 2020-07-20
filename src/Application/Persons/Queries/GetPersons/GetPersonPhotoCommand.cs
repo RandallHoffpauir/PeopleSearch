@@ -9,11 +9,11 @@ using PeopleSearch.Application.Common.Interfaces;
 
 namespace PeopleSearch.Application.Persons.Queries.GetPersons
 {
-    public class GetPersonPhotoCommand : IRequest<byte[]>
+    public class GetPersonPhotoCommand : IRequest<string>
     {
         public long PersonId { get; set; }
 
-        public class GetPersonPhotoCommandHandler : IRequestHandler<GetPersonPhotoCommand, byte[]>
+        public class GetPersonPhotoCommandHandler : IRequestHandler<GetPersonPhotoCommand, string>
         {
             private readonly IApplicationDbContext _context;
 
@@ -22,20 +22,20 @@ namespace PeopleSearch.Application.Persons.Queries.GetPersons
                 _context = context;
             }
 
-            public async Task<byte[]> Handle(GetPersonPhotoCommand request, CancellationToken cancellationToken)
+            public async Task<string> Handle(GetPersonPhotoCommand request, CancellationToken cancellationToken)
             {
-                var person = await _context.Persons.FirstOrDefaultAsync(p => p.Id == request.PersonId);
-                return person?.Photo;
+                var person = await _context.Persons.FirstOrDefaultAsync(p => p.Id == request.PersonId, cancellationToken: cancellationToken);
+                //return person?.Photo;
 
-                //if (person != null)
-                //{
-                //    string imageBase64Data = Convert.ToBase64String(person.Photo);
-                //    string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
+                if (person?.Photo != null)
+                {
+                    string imageBase64Data = Convert.ToBase64String(person.Photo);
+                    string imageDataURL = string.Format("data:image/jpg;base64,{0}", imageBase64Data);
 
-                //    return imageDataURL;
-                //}
+                    return imageDataURL;
+                }
 
-                //return "";
+                return "";
             }
         }
     }

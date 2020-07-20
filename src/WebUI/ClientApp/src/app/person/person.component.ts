@@ -1,8 +1,6 @@
 import { Component, TemplateRef } from '@angular/core';
-import {
-  PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto, FileParameter,
-  FileParameter as IFileParameter
-} from '../peoplesearch-api';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto } from '../peoplesearch-api';
 import { faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -32,7 +30,7 @@ export class PersonComponent {
 
   url = "";
 
-  constructor(private personsClient: PersonsClient, private modalService: BsModalService) {
+  constructor(private personsClient: PersonsClient, private modalService: BsModalService, private http: HttpClient) {
 
   }
 
@@ -40,6 +38,9 @@ export class PersonComponent {
     this.personsClient.get(this.searchValue).subscribe(
       result => {
         this.vm = result;
+        for (let i = 0; i < this.vm.persons.length; i++) {
+          this.setPhotoUrl(this.vm.persons[i].id);
+        }
       },
       error => console.error(error)
     );
@@ -123,10 +124,13 @@ export class PersonComponent {
   //    );
   //}
 
+  selectedFile: File = null;
   onSelectFile(e) {
     if (e.target.files) {
 
-      this.savePersonImage(e.target.files[0]);
+      //this.savePersonImage(e.target.files[0]);
+
+      this.selectedFile = e.target.files[0] as File;
 
       let reader = new FileReader();
 
@@ -137,30 +141,26 @@ export class PersonComponent {
       };
     }
   }
-  savePersonImage(file) {
 
-    let reader = new FileReader();
-
-    reader.readAsArrayBuffer(file);
-    reader.onload = (event: any) => {
-
-      let x = new Blob([event.target.result.buffer], { type: "image/jpeg" });
-      let fileParameter = {
-        data: x,
-        fileName: "foo.jpg"
-      }
-
-      this.personsClient.uploadImage(3, fileParameter)
-        .subscribe(
-          () => console.log("Update Photo succeeded."),
-          error => console.error(error)
-        );
-
-    };
-
+  savePersonImage() {
+    let url = 'https://localhost:44312/api/persons/4/photo';
+    const fd = new FormData();
+    fd.append('image', this.selectedFile, this.selectedFile.name);
+    this.http.post(url, fd)
+      .subscribe(res => {
+        console.log(res);
+      });
   }
 
-  getPhotoUrl(id: number): string {
-    return "persons/" + id + "/photo";
+  setPhotoUrl(id: number): void {
+    this.personsClient.getImage(id).subscribe(res => {
+      if (res.length > 0) {
+        console.log("image downloaded successfully");
+        let img = document.getElementById("photo" + id) as HTMLImageElement;
+        if (img) {
+          img.src = res;
+        }
+      }
+    });
   }
 }

@@ -11,7 +11,7 @@
   <img [src]="url" height="200" />
   <br />
   <input type="file" id="photo" (change)="onSelectFile($event)" name="photo" />
-  <input type="submit" class="btn btn-primary" (click)="savePersonImage($event)">/>
+  <input type="submit" class="btn btn-primary" (click)="savePersonImage()">/>
 </form>
 
 <div *ngIf="vm">
@@ -32,7 +32,7 @@
               {{inter.interest}}
             </li>
           </ul>
-          <img [src]="person.photo" height="200" />
+          <img id="{{ 'photo' + person.id}}" src="" height="200" />
         </div>
         <button id="savePerson" (click)="updatePerson(person)">Save</button>
         <div class="col-sm-4">{{person.firstName}} {{person.lastName}} age: {{ calculateAge(person.birthDate) }}</div>

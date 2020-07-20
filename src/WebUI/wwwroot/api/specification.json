@@ -144,17 +144,6 @@
               "format": "int64"
             },
             "x-position": 1
-          },
-          {
-            "type": "file",
-            "name": "photo",
-            "in": "formData",
-            "schema": {
-              "type": "string",
-              "format": "binary",
-              "nullable": true
-            },
-            "nullable": true
           }
         ],
         "responses": {
@@ -197,10 +186,9 @@
           "200": {
             "description": "",
             "content": {
-              "application/octet-stream": {
+              "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "binary"
+                  "type": "string"
                 }
               }
             }
@@ -648,10 +636,6 @@
           "birthDate": {
             "type": "string",
             "format": "date-time"
-          },
-          "photo": {
-            "type": "string",
-            "nullable": true
           },
           "interests": {
             "type": "array",

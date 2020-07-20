@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PeopleSearch.Application.Persons.Commands.CreatePerson;
@@ -15,6 +16,7 @@ namespace PeopleSearch.WebUI.Controllers
     [Authorize]
     public class PersonsController : ApiController
     {
+
         [HttpGet]
         public async Task<ActionResult<PersonsVm>> Get(string nameSearch)
         {
@@ -45,35 +47,55 @@ namespace PeopleSearch.WebUI.Controllers
 
         [Route("{id}/photo")]
         [HttpPost]
-        public async Task<ActionResult<long>> UploadImage([FromRoute] long id, IFormFile photo)
+        public async Task<ActionResult<long>> UploadImage([FromRoute] long id)
         {
-            //var file = Request.Form.Files[0];
+            var file = Request.Form.Files[0];
 
-            MemoryStream ms = new MemoryStream();
-            photo.CopyTo(ms);
-
-            await Mediator.Send(new UpdatePersonPhotoCommand()
+            using (MemoryStream ms = new MemoryStream())
             {
-                PersonId = id,
-                Photo = ms.ToArray()
-            });
+                file.CopyTo(ms);
 
-            return NoContent();
+                await Mediator.Send(new UpdatePersonPhotoCommand()
+                {
+                    PersonId = id,
+                    Photo = ms.ToArray()
+                });
+            }
+
+            return Ok(new { Status = "File Upload successful." });
         }
 
         [Route("{id}/photo")]
         [HttpGet]
-        public async Task<ActionResult> GetImage([FromRoute] long id)
+        public async Task<ActionResult<string>> GetImage([FromRoute] long id)
         {
-
-            var photo =  await Mediator.Send(new GetPersonPhotoCommand()
+            try
             {
-                PersonId = id,
-            });
+                var photo = await Mediator.Send(new GetPersonPhotoCommand()
+                {
+                    PersonId = id
+                });
 
-            return File(photo, "image/jpeg");
+                
+                return photo;
+                //return File(photo, "image/jpeg");
+
+            }
+            catch (Exception e)
+            {
+                
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
 
+    }
+
+    public class CreatePhoto
+    {
+        public string PhotoName { get; set; }
+        public IFormFile PhotoFile { get; set; }
     }
 
 }

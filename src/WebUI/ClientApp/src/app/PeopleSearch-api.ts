@@ -18,8 +18,8 @@ export interface IPersonsClient {
     get(nameSearch: string | null | undefined): Observable<PersonsVm>;
     create(command: CreatePersonCommand): Observable<number>;
     update(id: number, command: UpdatePersonCommand): Observable<FileResponse>;
-    uploadImage(id: number, photo: FileParameter | null | undefined): Observable<number>;
-    getImage(id: number): Observable<FileResponse>;
+    uploadImage(id: number): Observable<number>;
+    getImage(id: number): Observable<string>;
 }
 
 @Injectable({
@@ -190,19 +190,14 @@ export class PersonsClient implements IPersonsClient {
         return _observableOf<FileResponse>(<any>null);
     }
 
-    uploadImage(id: number, photo: FileParameter | null | undefined): Observable<number> {
+    uploadImage(id: number): Observable<number> {
         let url_ = this.baseUrl + "/api/Persons/{id}/photo";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = new FormData();
-        if (photo !== null && photo !== undefined)
-            content_.append("photo", photo.data, photo.fileName ? photo.fileName : "photo");
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -246,7 +241,7 @@ export class PersonsClient implements IPersonsClient {
         return _observableOf<number>(<any>null);
     }
 
-    getImage(id: number): Observable<FileResponse> {
+    getImage(id: number): Observable<string> {
         let url_ = this.baseUrl + "/api/Persons/{id}/photo";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -257,7 +252,7 @@ export class PersonsClient implements IPersonsClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -268,31 +263,33 @@ export class PersonsClient implements IPersonsClient {
                 try {
                     return this.processGetImage(<any>response_);
                 } catch (e) {
-                    return <Observable<FileResponse>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<FileResponse>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetImage(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetImage(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<FileResponse>(<any>null);
+        return _observableOf<string>(<any>null);
     }
 }
 
@@ -921,7 +918,6 @@ export class PersonDto implements IPersonDto {
     state?: string | undefined;
     zip?: string | undefined;
     birthDate?: Date;
-    photo?: string | undefined;
     interests?: PersonInterestDto[] | undefined;
 
     constructor(data?: IPersonDto) {
@@ -943,7 +939,6 @@ export class PersonDto implements IPersonDto {
             this.state = data["state"];
             this.zip = data["zip"];
             this.birthDate = data["birthDate"] ? new Date(data["birthDate"].toString()) : <any>undefined;
-            this.photo = data["photo"];
             if (Array.isArray(data["interests"])) {
                 this.interests = [] as any;
                 for (let item of data["interests"])
@@ -969,7 +964,6 @@ export class PersonDto implements IPersonDto {
         data["state"] = this.state;
         data["zip"] = this.zip;
         data["birthDate"] = this.birthDate ? this.birthDate.toISOString() : <any>undefined;
-        data["photo"] = this.photo;
         if (Array.isArray(this.interests)) {
             data["interests"] = [];
             for (let item of this.interests)
@@ -988,7 +982,6 @@ export interface IPersonDto {
     state?: string | undefined;
     zip?: string | undefined;
     birthDate?: Date;
-    photo?: string | undefined;
     interests?: PersonInterestDto[] | undefined;
 }
 
@@ -1625,11 +1618,6 @@ export interface IWeatherForecast {
     temperatureC?: number;
     temperatureF?: number;
     summary?: string | undefined;
-}
-
-export interface FileParameter {
-    data: any;
-    fileName: string;
 }
 
 export interface FileResponse {

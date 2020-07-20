@@ -58,7 +58,7 @@ export class PersonComponent {
         return months <= 0 ? "0" : months + " months";
       }
     }
-    return age;
+    return age + " yrs";
   }
 
   showNewPersonModal(template: TemplateRef<any>): void {
@@ -142,8 +142,8 @@ export class PersonComponent {
     }
   }
 
-  savePersonImage() {
-    let url = 'https://localhost:44312/api/persons/4/photo';
+  savePersonImage(id: number) {
+    let url = 'https://localhost:44312/api/persons/' + id + '/photo';
     const fd = new FormData();
     fd.append('image', this.selectedFile, this.selectedFile.name);
     this.http.post(url, fd)

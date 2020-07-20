@@ -5,22 +5,50 @@
 
 <button class="btn btn-primary" (click)="showNewPersonModal(newPersonModalTemplate)">Add Person...</button>
 
-<br/>
+<br />
 
 <form enctype="multipart/form-data">
   <img [src]="url" height="200" />
   <br />
-  <input type="file" id="photo" (change)="onSelectFile($event)" name="photo" />
+  <input type="file" id="photo" accept=".jpg" (change)="onSelectFile($event)" name="photo" />
   <input type="submit" class="btn btn-primary" (click)="savePersonImage()">/>
 </form>
 
-<div *ngIf="vm">
-  <ul id="persons">
+<div *ngIf="vm" class="container wrap">
+  <ul id="persons" class="no-bullets">
     <li *ngFor="let person of vm.persons; index as i">
 
       <div class="row">
 
-        <div class="input-group">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-3">
+          <div class="well well-sm">
+            <div class="row">
+              <div class="col-sm-2 col-md-4 col-lg-5">
+                <img id="{{ 'photo' + person.id}}" src="" alt="" class="img-rounded img-responsive" height="200" />
+              </div>
+              <div class="col-sm-10 col-md-8 col-lg-7">
+                <h4>{{person.firstName}} {{person.lastName}} ({{ calculateAge(person.birthDate) }})</h4>
+                <small><span >{{person.address}}<i class="glyphicon glyphicon-map-marker"></i></span></small><br/>
+                <small><span>{{person.city}} {{person.state}} {{person.zip}}<i class="glyphicon glyphicon-map-marker"></i></span></small>
+                <p>
+                  <i class="glyphicon glyphicon-envelope"></i>lorem@random.net
+                  <br />
+                  <i class="glyphicon glyphicon-globe"></i><a href="https://www.prepbootstrap.com">www.prepbootstrap.com</a>
+                  <br />
+                  <i class="glyphicon glyphicon-gift"></i>January 19, 1993
+                </p>
+                <div class="btn-group">
+                  <a href="#" class="btn btn-primary"><span class="fa fa-2x fa-facebook"></span></a>
+                  <a href="#" class="btn btn-danger"><span class="fa fa-2x fa-google"></span></a>
+                  <a href="#" class="btn btn-info"><span class="fa fa-2x fa-twitter"></span></a>
+                  <a href="#" class="btn btn-primary"><span class="fa fa-2x fa-linkedin"></span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--<div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">First and Last Name</span>
           </div>
@@ -35,7 +63,8 @@
           <img id="{{ 'photo' + person.id}}" src="" height="200" />
         </div>
         <button id="savePerson" (click)="updatePerson(person)">Save</button>
-        <div class="col-sm-4">{{person.firstName}} {{person.lastName}} age: {{ calculateAge(person.birthDate) }}</div>
+        <div class="col-sm-4">{{person.firstName}} {{person.lastName}} age: {{ calculateAge(person.birthDate) }}</div>-->
+
       </div>
 
     </li>
@@ -117,3 +146,15 @@
     </div>
   </div>
 </ng-template>
+
+<style>
+  .well {
+    border: 1px solid blue;
+  }
+
+  ul.no-bullets {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margins */
+  }}
+</style>

@@ -37,7 +37,7 @@ namespace PeopleSearch.Application.Persons.Commands.CreatePerson
 
                 entity.FirstName = request.FirstName;
                 entity.LastName = request.LastName;
-                entity.Address = request.FirstName;
+                entity.Address = request.Address;
                 entity.City = request.City;
                 entity.State = request.State;
                 entity.Zip = request.Zip;

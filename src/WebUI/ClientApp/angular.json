@@ -28,7 +28,10 @@
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js", // <- jQuery goes first
+              "./node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -79,7 +82,10 @@
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.min.js", // <- jQuery goes first
+              "./node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ],
             "assets": [
               "src/assets"
             ]

@@ -18,9 +18,11 @@ export class PersonComponent {
   selectedPerson: PersonDto;
   selectedInterest: PersonInterestDto;
 
-  newPersonEditor: any = {};
+  personEditor: any = {};
 
   newPersonModalRef: BsModalRef;
+  editPersonModalRef: BsModalRef;
+  editPersonPhotoModalRef: BsModalRef;
 
   faPlus = faPlus;
   faEllipsisH = faEllipsisH;
@@ -47,6 +49,7 @@ export class PersonComponent {
   }
 
 
+
   calculateAge(birthDate) {
     let ageDifMs = Date.now() - birthDate.getTime();
     let ageDate = new Date(ageDifMs);
@@ -58,77 +61,95 @@ export class PersonComponent {
         return months <= 0 ? "0" : months + " months";
       }
     }
-    return age + " yrs";
+    return "age " + age;
   }
 
   showNewPersonModal(template: TemplateRef<any>): void {
     this.newPersonModalRef = this.modalService.show(template);
-    //setTimeout(() => document.getElementById("firstName").focus(), 250);
+  }
+
+  showEditPersonModal(template: TemplateRef<any>, person: PersonDto): void {
+    this.selectedPerson = person;
+    this.personEditor = {
+      firstName: person.firstName,
+      lastName: person.lastName,
+      address: person.address,
+      city: person.city,
+      state: person.state,
+      zip: person.zip,
+      birthDate: person.birthDate
+    }
+    this.editPersonModalRef = this.modalService.show(template);
+  }
+
+  showEditPersonPhotoModal(template: TemplateRef<any>, person: PersonDto): void {
+    this.selectedPerson = person;
+    this.editPersonPhotoModalRef = this.modalService.show(template);
   }
 
   newPersonCancelled(): void {
     this.newPersonModalRef.hide();
-    this.newPersonEditor = {};
+    this.personEditor = {};
+  }
+
+  editPersonCancelled(): void {
+    this.editPersonModalRef.hide();
+    this.personEditor = {};
+  }
+
+  editPersonPhotoCancelled(): void {
+    this.editPersonPhotoModalRef.hide();
+    this.url = "";
   }
 
   addPerson(): void {
-    let person = PersonDto.fromJS({
-      id: 0,
-      firstName: this.newPersonEditor.firstName,
-      lastName: this.newPersonEditor.lastName,
-      address: this.newPersonEditor.address,
-      city: this.newPersonEditor.city,
-      state: this.newPersonEditor.state,
-      zip: this.newPersonEditor.zip,
-      birthDate: this.newPersonEditor.birthDate,
-      interests: []
+    let command = new CreatePersonCommand({
+      firstName: this.personEditor.firstName,
+      lastName: this.personEditor.lastName,
+      address: this.personEditor.address,
+      city: this.personEditor.city,
+      state: this.personEditor.state,
+      zip: this.personEditor.zip,
+      birthDate: this.personEditor.birthDate
     });
-
-    this.personsClient.create(<CreatePersonCommand>{
-      firstName: this.newPersonEditor.firstName,
-      lastName: this.newPersonEditor.lastName,
-      address: this.newPersonEditor.address,
-      city: this.newPersonEditor.city,
-      state: this.newPersonEditor.state,
-      zip: this.newPersonEditor.zip,
-      birthDate: this.newPersonEditor.birthDate
-    }).subscribe(result => {
+    this.personsClient.create(command).subscribe(result => {
       this.newPersonModalRef.hide();
-      this.newPersonEditor = {};
+      this.personEditor = {};
     },
       error => {
         let errors = JSON.parse(error.response);
 
-        //if (errors && errors.Title) {
-        //  this.newPersonEditor.error = errors.Title[0];
-        //}
-
-        //setTimeout(() => document.getElementById("title").focus(), 250);
       });
   }
 
-  updatePerson(person: PersonDto): void {
+  updatePerson(personId: number): void {
+    let command = new UpdatePersonCommand({
+      id: personId,
+      firstName: this.personEditor.firstName,
+      lastName: this.personEditor.lastName,
+      address: this.personEditor.address,
+      city: this.personEditor.city,
+      state: this.personEditor.state,
+      zip: this.personEditor.zip,
+      birthDate: this.personEditor.birthDate
+    });
 
-    this.personsClient.update(person.id, UpdatePersonCommand.fromJS(person))
+    this.personsClient.update(personId, command)
       .subscribe(
-        () => console.log("Update succeeded."),
+        () => {
+          console.log("Update succeeded.");
+          this.editPersonModalRef.hide();
+          this.personEditor = {};
+          this.selectedPerson = null;
+        },
         error => console.error(error)
       );
   }
 
-  //updatePersonPhoto(person: PersonDto): void {
-  //  this.personsClient.uploadImage(person.id)
-  //    .subscribe(
-  //      () => console.log("Update succeeded."),
-  //      error => console.error(error)
-  //    );
-  //}
 
   selectedFile: File = null;
   onSelectFile(e) {
     if (e.target.files) {
-
-      //this.savePersonImage(e.target.files[0]);
 
       this.selectedFile = e.target.files[0] as File;
 
@@ -149,6 +170,9 @@ export class PersonComponent {
     this.http.post(url, fd)
       .subscribe(res => {
         console.log(res);
+        this.setPhotoUrl(id);
+        this.editPersonPhotoModalRef.hide();
+        this.url = "";
       });
   }
 

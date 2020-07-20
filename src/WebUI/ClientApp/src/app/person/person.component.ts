@@ -1,5 +1,8 @@
 import { Component, TemplateRef } from '@angular/core';
-import { PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto } from '../peoplesearch-api';
+import {
+  PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto, FileParameter,
+  FileParameter as IFileParameter
+} from '../peoplesearch-api';
 import { faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -26,6 +29,8 @@ export class PersonComponent {
 
 
   searchValue = "";
+
+  url = "";
 
   constructor(private personsClient: PersonsClient, private modalService: BsModalService) {
 
@@ -98,7 +103,7 @@ export class PersonComponent {
         //}
 
         //setTimeout(() => document.getElementById("title").focus(), 250);
-    });
+      });
   }
 
   updatePerson(person: PersonDto): void {
@@ -108,5 +113,54 @@ export class PersonComponent {
         () => console.log("Update succeeded."),
         error => console.error(error)
       );
+  }
+
+  //updatePersonPhoto(person: PersonDto): void {
+  //  this.personsClient.uploadImage(person.id)
+  //    .subscribe(
+  //      () => console.log("Update succeeded."),
+  //      error => console.error(error)
+  //    );
+  //}
+
+  onSelectFile(e) {
+    if (e.target.files) {
+
+      this.savePersonImage(e.target.files[0]);
+
+      let reader = new FileReader();
+
+      reader.readAsDataURL(e.target.files[0]);
+
+      reader.onload = (event: any) => {
+        this.url = event.target.result;
+      };
+    }
+  }
+  savePersonImage(file) {
+
+    let reader = new FileReader();
+
+    reader.readAsArrayBuffer(file);
+    reader.onload = (event: any) => {
+
+      let x = new Blob([event.target.result.buffer], { type: "image/jpeg" });
+      let fileParameter = {
+        data: x,
+        fileName: "foo.jpg"
+      }
+
+      this.personsClient.uploadImage(3, fileParameter)
+        .subscribe(
+          () => console.log("Update Photo succeeded."),
+          error => console.error(error)
+        );
+
+    };
+
+  }
+
+  getPhotoUrl(id: number): string {
+    return "persons/" + id + "/photo";
   }
 }

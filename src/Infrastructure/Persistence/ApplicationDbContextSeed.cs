@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using PeopleSearch.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Threading.Tasks;
 using PeopleSearch.Domain.Entities;
+using System.Drawing;
 
 namespace PeopleSearch.Infrastructure.Persistence
 {
@@ -22,9 +24,13 @@ namespace PeopleSearch.Infrastructure.Persistence
 
         public static async Task SeedPersonsAsync(ApplicationDbContext context)
         {
+
             if (!context.Persons.Any())
             {
 
+                var path = Directory.GetCurrentDirectory() + "\\ClientApp\\src\\assets\\images\\";
+
+                var photo = System.IO.File.ReadAllBytes(path + "bob.jpg");
                 var person = new Person()
                 {
                     FirstName = "John",
@@ -34,6 +40,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     State = "Louisiana",
                     Zip = "70503",
                     BirthDate = new DateTime(1961, 3, 14),
+                    Photo = photo,
                     Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Cycling"},
@@ -43,6 +50,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                 await context.Persons.AddAsync(person);
 
 
+                photo = System.IO.File.ReadAllBytes(path + "beth.jpg");
                 person = new Person()
                 {
                     FirstName = "Mary",
@@ -52,6 +60,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     State = "Texas",
                     Zip = "12345",
                     BirthDate = new DateTime(1956, 2, 14),
+                    Photo = photo,
                     Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Hiking"}
@@ -59,6 +68,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                 };
                 await context.Persons.AddAsync(person);
 
+                photo = System.IO.File.ReadAllBytes(path + "sally.jpg");
                 person = new Person()
                 {
                     FirstName = "Sally",
@@ -67,10 +77,12 @@ namespace PeopleSearch.Infrastructure.Persistence
                     City = "Memphis",
                     State = "Tennessee",
                     Zip = "38138",
+                    Photo = photo,
                     BirthDate = new DateTime(1971, 12, 1),
                 };
                 await context.Persons.AddAsync(person);
 
+                photo = System.IO.File.ReadAllBytes(path + "dan.jpg");
                 person = new Person()
                 {
                     FirstName = "Rick",
@@ -80,6 +92,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     State = "Florida",
                     Zip = "44556",
                     BirthDate = new DateTime(1999, 7, 7),
+                    Photo = photo,
                     Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Photography"},
@@ -90,14 +103,16 @@ namespace PeopleSearch.Infrastructure.Persistence
                 await context.Persons.AddAsync(person);
 
 
+                photo = System.IO.File.ReadAllBytes(path + "jim.jpg");
                 person = new Person()
                 {
-                    FirstName = "Alice",
+                    FirstName = "Jim",
                     LastName = "Morris",
                     Address = "965 Overland Road",
                     City = "Greenville",
                     State = "South Carolina",
                     Zip = "98765",
+                    Photo = photo,
                     BirthDate = new DateTime(2003, 4, 25),
                 };
                 await context.Persons.AddAsync(person);

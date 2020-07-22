@@ -37,7 +37,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     new PersonInterest(){Interest = "Fishing"}
                 }
             };
-            await context.AddAsync(person);
+            await context.Persons.AddAsync(person);
 
 
             person = new Person()
@@ -54,7 +54,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     new PersonInterest(){Interest = "Hiking"}
                 }
             };
-            await context.AddAsync(person);
+            await context.Persons.AddAsync(person);
 
             person = new Person()
             {
@@ -66,7 +66,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                 Zip = "38138",
                 BirthDate = new DateTime(1971, 12, 1),
             };
-            await context.AddAsync(person);
+            await context.Persons.AddAsync(person);
 
             person = new Person()
             {
@@ -84,7 +84,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                     new PersonInterest(){Interest = "Painting"}
                 }
             };
-            await context.AddAsync(person);
+            await context.Persons.AddAsync(person);
 
 
             person = new Person()
@@ -97,7 +97,7 @@ namespace PeopleSearch.Infrastructure.Persistence
                 Zip = "98765",
                 BirthDate = new DateTime(2003, 4, 25),
             };
-            await context.AddAsync(person);
+            await context.Persons.AddAsync(person);
 
         }
     }

@@ -29,6 +29,7 @@ namespace PeopleSearch.WebUI
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
                     await ApplicationDbContextSeed.SeedAsync(userManager);
+                    await ApplicationDbContextSeed.SeedPersonsAsync(context);
                 }
                 catch (Exception ex)
                 {

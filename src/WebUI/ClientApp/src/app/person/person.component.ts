@@ -1,6 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { formatDate } from '@angular/common';
 import { PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto } from '../peoplesearch-api';
 import { faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';

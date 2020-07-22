@@ -21,7 +21,8 @@ namespace PeopleSearch.WebUI.Controllers
         [HttpGet]
         public async Task<ActionResult<PersonsVm>> Get(string nameSearch)
         {
-            Thread.Sleep(5000);
+            // slowing down the process on purpose
+            Thread.Sleep(3000);
 
             return await Mediator.Send(new GetPersonsQuery()
             {

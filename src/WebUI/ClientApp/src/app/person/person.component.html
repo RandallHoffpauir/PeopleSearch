@@ -5,6 +5,8 @@
 
   <button class="btn btn-primary" (click)="search()">Search</button>
 
+  <button class="btn btn-primary" (click)="clear()">Clear</button>
+
   <button class="btn btn-primary" (click)="showNewPersonModal(newPersonModalTemplate)">Add Person...</button>
 
   <div *ngIf="isSearching" class="sbl-circ child"></div>
@@ -18,37 +20,38 @@
   <ul id="persons" class="no-bullets">
     <li *ngFor="let person of vm.persons; index as i">
 
-      <!--<div class="row">-->
+      <div class="row">
 
-      <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-3">
-        <div class="well well-sm">
-          <div class="row">
-            <div class="col-xs-12 col-sm-2 col-md-4 col-lg-5">
-              <img id="{{ 'photo' + person.id}}" src="" alt="" class="img-rounded img-responsive"  width="200" />
-            </div>
-            <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7">
-              <h4>{{person.firstName}} {{person.lastName}} ({{ calculateAge(person.birthDate) }})</h4>
-              <small><span>{{person.address}}<i class="glyphicon glyphicon-map-marker"></i></span></small><br />
-              <small><span>{{person.city}} {{person.state}} {{person.zip}}<i class="glyphicon glyphicon-map-marker"></i></span></small>
-              <div *ngIf="person.interests.length > 0">
-                <h5>Interests</h5>
-                <ul id="{{ 'interests' + person.id}}">
-                  <li *ngFor="let interest of person.interests">
-                    {{ interest.interest }}
-                  </li>
-                </ul>
+        <div class="col-xs-12 col-sm-6 col-md-6 col-md-offset-3">
+          <div class="well well-sm">
+            <div class="row">
+              <div class="col-xs-12 col-sm-2 col-md-4 col-lg-5">
+                <img id="{{ 'photo' + person.id}}" src="" alt="" class="img-rounded img-responsive" width="200" />
               </div>
-            </div>
-            <div class="center">
-              <button class="btn btn-primary" id="editPerson" (click)="showEditPersonModal(editPersonModalTemplate, person)">Edit Person</button>
-              <button class="btn btn-primary" id="updatePersonPhoto" (click)="showEditPersonPhotoModal(editPersonPhotoModalTemplate, person)">Update Photo</button>
-            </div>
+              <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7">
+                <h4>{{person.firstName}} {{person.lastName}} ({{ calculateAge(person.birthDate) }})</h4>
+                <small><span>{{person.address}}<i class="glyphicon glyphicon-map-marker"></i></span></small><br />
+                <small><span>{{person.city}} {{person.state}} {{person.zip}}<i class="glyphicon glyphicon-map-marker"></i></span></small>
+                <div *ngIf="person.interests.length > 0">
+                  <h5>Interests</h5>
+                  <ul id="{{ 'interests' + person.id}}">
+                    <li *ngFor="let interest of person.interests">
+                      {{ interest.interest }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="center outer">
+                <button class="btn btn-primary inner" id="editPerson" (click)="showEditPersonModal(editPersonModalTemplate, person)">Edit Person</button>
+                <button class="btn btn-primary inner" id="updatePersonPhoto" (click)="showEditPersonPhotoModal(editPersonPhotoModalTemplate, person)">Update Photo</button>
+                <button class="btn btn-primary inner" id="updateInterest" (click)="showEditPersonInterestModal(editPersonInterestModalTemplate, person)">Update Interests</button>
+              </div>
 
+            </div>
           </div>
         </div>
-      </div>
 
-      <!--</div>-->
+        </div>
 
     </li>
   </ul>
@@ -72,17 +75,17 @@
   <label for="address">Address:</label>
   <input type="text" class="form-control" id="address" placeholder="Address..." [(ngModel)]="personEditor.address" />
 
-  <label for="address">City:</label>
+  <label for="city">City:</label>
   <input type="text" class="form-control" id="city" placeholder="City..." [(ngModel)]="personEditor.city" />
 
-  <label for="address">State:</label>
+  <label for="state">State:</label>
   <input type="text" class="form-control" id="state" placeholder="State..." [(ngModel)]="personEditor.state" />
 
-  <label for="address">Zip:</label>
+  <label for="zip">Zip:</label>
   <input type="text" class="form-control" id="zip" placeholder="Zip..." [(ngModel)]="personEditor.zip" />
 
-  <label for="address">Birth Date:</label>
-  <input type="text" class="form-control" id="birthDate" placeholder="Birth Date..." [(ngModel)]="personEditor.birthDate" />
+  <!--<label for="birthDate">Birth Date:</label>
+  <input type="text" class="form-control" id="birthDate" placeholder="Birth Date..." [(ngModel)]="personEditor.birthDate" />-->
 
 </ng-template>
 
@@ -130,6 +133,30 @@
     <div class="text-right">
       <button class="btn btn-default" (click)="editPersonCancelled()">Cancel</button>
       <button class="btn btn-primary" (click)="updatePerson(selectedPerson.id)">Update</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #editPersonInterestModalTemplate>
+  <div class="modal-header clearfix">
+    <h4 class="modal-title float-left">Person Interest</h4>
+    <button type="button" class="close float-right" aria-label="Close" (click)="editPersonInterestCancelled()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+
+      <!--<ng-container *ngTemplateOutlet="editPersonTemplate"></ng-container>-->
+    </div>
+    <div *ngIf="debug">
+      <pre>{{ personEditor | json }}</pre>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="text-right">
+      <button class="btn btn-default" (click)="editPersonInterestsCancelled()">Cancel</button>
+      <button class="btn btn-primary" (click)="updatePersonInterests(selectedPerson.id)">Update</button>
     </div>
   </div>
 </ng-template>
@@ -211,4 +238,12 @@
     transform: translateY(-50%);
   }
 
+  .outer {
+    width: 100%;
+    text-align: center;
+  }
+
+  .inner {
+    display: inline-block;
+  }
 </style>

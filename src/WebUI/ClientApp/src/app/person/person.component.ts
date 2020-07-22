@@ -1,5 +1,6 @@
 import { Component, TemplateRef } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { formatDate } from '@angular/common';
 import { PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto } from '../peoplesearch-api';
 import { faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
@@ -20,9 +21,12 @@ export class PersonComponent {
 
   personEditor: any = {};
 
+  personInterestEditor: any = {};
+
   newPersonModalRef: BsModalRef;
   editPersonModalRef: BsModalRef;
   editPersonPhotoModalRef: BsModalRef;
+  editPersonInterestsModalRef: BsModalRef;
 
   faPlus = faPlus;
   faEllipsisH = faEllipsisH;
@@ -35,6 +39,10 @@ export class PersonComponent {
 
   constructor(private personsClient: PersonsClient, private modalService: BsModalService, private http: HttpClient) {
 
+  }
+
+  clear() {
+    this.vm = null;
   }
 
   search() {
@@ -57,6 +65,10 @@ export class PersonComponent {
 
 
   calculateAge(birthDate) {
+    let oldDate = new Date("1/2/1200");
+    if (birthDate < oldDate) {
+      return "unknown";
+    }
     let ageDifMs = Date.now() - birthDate.getTime();
     let ageDate = new Date(ageDifMs);
     let age = Math.abs(ageDate.getUTCFullYear() - 1970);
@@ -88,6 +100,18 @@ export class PersonComponent {
     this.editPersonModalRef = this.modalService.show(template);
   }
 
+  showEditPersonInterestsModal(template: TemplateRef<any>, person: PersonDto): void {
+    this.selectedPerson = person;
+    this.personInterestEditor = {
+      Interests: []
+    };
+    for (let i = 0; i < person.interests.length; i++) {
+      this.personInterestEditor.interests.push({ interest:person.interests[i].interest, id: person.interests[i].id });
+    }
+
+    this.editPersonInterestsModalRef = this.modalService.show(template);
+  }
+
   showEditPersonPhotoModal(template: TemplateRef<any>, person: PersonDto): void {
     this.selectedPerson = person;
     this.editPersonPhotoModalRef = this.modalService.show(template);
@@ -103,6 +127,10 @@ export class PersonComponent {
     this.personEditor = {};
   }
 
+  editPersonInterestsCancelled(): void {
+    this.editPersonInterestsModalRef.hide();
+    //this.personEditor = {};
+  }
   editPersonPhotoCancelled(): void {
     this.editPersonPhotoModalRef.hide();
     this.url = "";
@@ -129,6 +157,40 @@ export class PersonComponent {
   }
 
   updatePerson(personId: number): void {
+    let command = new UpdatePersonCommand({
+      id: personId,
+      firstName: this.personEditor.firstName,
+      lastName: this.personEditor.lastName,
+      address: this.personEditor.address,
+      city: this.personEditor.city,
+      state: this.personEditor.state,
+      zip: this.personEditor.zip,
+      birthDate: this.personEditor.birthDate
+  });
+
+    this.personsClient.update(personId, command)
+      .subscribe(
+        () => {
+
+          console.log("Update succeeded.");
+
+          this.selectedPerson.firstName = this.personEditor.firstName;
+          this.selectedPerson.lastName = this.personEditor.lastName;
+          this.selectedPerson.address = this.personEditor.address;
+          this.selectedPerson.city = this.personEditor.city;
+          this.selectedPerson.state = this.personEditor.state;
+          this.selectedPerson.zip = this.personEditor.zip;
+          this.selectedPerson.birthDate = this.personEditor.birthDate;
+
+          this.editPersonModalRef.hide();
+          this.personEditor = {};
+          this.selectedPerson = null;
+        },
+        error => console.error(error)
+      );
+  }
+
+  updatePersonInterests(personId: number): void {
     let command = new UpdatePersonCommand({
       id: personId,
       firstName: this.personEditor.firstName,

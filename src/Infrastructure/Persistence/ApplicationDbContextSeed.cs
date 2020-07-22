@@ -22,82 +22,88 @@ namespace PeopleSearch.Infrastructure.Persistence
 
         public static async Task SeedPersonsAsync(ApplicationDbContext context)
         {
-            var person = new Person()
+            if (!context.Persons.Any())
             {
-                FirstName = "John",
-                LastName = "Smith",
-                Address = "123 Main",
-                City = "Lafayette",
-                State = "Louisiana",
-                Zip = "70503",
-                BirthDate = new DateTime(1961, 3, 14),
-                Interests = new List<PersonInterest>()
+
+                var person = new Person()
+                {
+                    FirstName = "John",
+                    LastName = "Smith",
+                    Address = "123 Main",
+                    City = "Lafayette",
+                    State = "Louisiana",
+                    Zip = "70503",
+                    BirthDate = new DateTime(1961, 3, 14),
+                    Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Cycling"},
                     new PersonInterest(){Interest = "Fishing"}
                 }
-            };
-            await context.Persons.AddAsync(person);
+                };
+                await context.Persons.AddAsync(person);
 
 
-            person = new Person()
-            {
-                FirstName = "Mary",
-                LastName = "Allen",
-                Address = "345 Oak Blvd",
-                City = "Houston",
-                State = "Texas",
-                Zip = "12345",
-                BirthDate = new DateTime(1956, 2, 14),
-                Interests = new List<PersonInterest>()
+                person = new Person()
+                {
+                    FirstName = "Mary",
+                    LastName = "Allen",
+                    Address = "345 Oak Blvd",
+                    City = "Houston",
+                    State = "Texas",
+                    Zip = "12345",
+                    BirthDate = new DateTime(1956, 2, 14),
+                    Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Hiking"}
                 }
-            };
-            await context.Persons.AddAsync(person);
+                };
+                await context.Persons.AddAsync(person);
 
-            person = new Person()
-            {
-                FirstName = "Sally",
-                LastName = "Jones",
-                Address = "567 Pine Avenue",
-                City = "Memphis",
-                State = "Tennessee",
-                Zip = "38138",
-                BirthDate = new DateTime(1971, 12, 1),
-            };
-            await context.Persons.AddAsync(person);
+                person = new Person()
+                {
+                    FirstName = "Sally",
+                    LastName = "Jones",
+                    Address = "567 Pine Avenue",
+                    City = "Memphis",
+                    State = "Tennessee",
+                    Zip = "38138",
+                    BirthDate = new DateTime(1971, 12, 1),
+                };
+                await context.Persons.AddAsync(person);
 
-            person = new Person()
-            {
-                FirstName = "Rick",
-                LastName = "Clark",
-                Address = "9834 Hwy 20",
-                City = "Tampa",
-                State = "Florida",
-                Zip = "44556",
-                BirthDate = new DateTime(1999, 7, 7),
-                Interests = new List<PersonInterest>()
+                person = new Person()
+                {
+                    FirstName = "Rick",
+                    LastName = "Clark",
+                    Address = "9834 Hwy 20",
+                    City = "Tampa",
+                    State = "Florida",
+                    Zip = "44556",
+                    BirthDate = new DateTime(1999, 7, 7),
+                    Interests = new List<PersonInterest>()
                 {
                     new PersonInterest(){Interest = "Photography"},
                     new PersonInterest(){Interest = "Reading"},
                     new PersonInterest(){Interest = "Painting"}
                 }
-            };
-            await context.Persons.AddAsync(person);
+                };
+                await context.Persons.AddAsync(person);
 
 
-            person = new Person()
-            {
-                FirstName = "Alice",
-                LastName = "Morris",
-                Address = "965 Overland Road",
-                City = "Greenville",
-                State = "South Carolina",
-                Zip = "98765",
-                BirthDate = new DateTime(2003, 4, 25),
-            };
-            await context.Persons.AddAsync(person);
+                person = new Person()
+                {
+                    FirstName = "Alice",
+                    LastName = "Morris",
+                    Address = "965 Overland Road",
+                    City = "Greenville",
+                    State = "South Carolina",
+                    Zip = "98765",
+                    BirthDate = new DateTime(2003, 4, 25),
+                };
+                await context.Persons.AddAsync(person);
+
+                await context.SaveChangesAsync();
+            }
 
         }
     }

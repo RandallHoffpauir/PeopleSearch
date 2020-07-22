@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,8 @@ namespace PeopleSearch.WebUI.Controllers
         [HttpGet]
         public async Task<ActionResult<PersonsVm>> Get(string nameSearch)
         {
+            Thread.Sleep(5000);
+
             return await Mediator.Send(new GetPersonsQuery()
             {
                 NameSearch = nameSearch

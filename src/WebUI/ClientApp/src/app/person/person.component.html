@@ -7,6 +7,9 @@
 
   <button class="btn btn-primary" (click)="showNewPersonModal(newPersonModalTemplate)">Add Person...</button>
 
+  <div *ngIf="isSearching" class="sbl-circ child"></div>
+
+
 </div>
 <br />
 
@@ -21,32 +24,26 @@
         <div class="well well-sm">
           <div class="row">
             <div class="col-xs-12 col-sm-2 col-md-4 col-lg-5">
-              <img id="{{ 'photo' + person.id}}" src="" alt="" class="img-rounded img-responsive" height="200"/>
+              <img id="{{ 'photo' + person.id}}" src="" alt="" class="img-rounded img-responsive" height="200" />
             </div>
             <div class="col-xs-12 col-sm-10 col-md-8 col-lg-7">
               <h4>{{person.firstName}} {{person.lastName}} ({{ calculateAge(person.birthDate) }})</h4>
               <small><span>{{person.address}}<i class="glyphicon glyphicon-map-marker"></i></span></small><br />
               <small><span>{{person.city}} {{person.state}} {{person.zip}}<i class="glyphicon glyphicon-map-marker"></i></span></small>
-              <p>
-                <i class="glyphicon glyphicon-envelope"></i>lorem@random.net
-                <br />
-                <i class="glyphicon glyphicon-globe"></i><a href="https://www.prepbootstrap.com">www.prepbootstrap.com</a>
-                <br />
-                <i class="glyphicon glyphicon-gift"></i>January 19, 1993
-              </p>
-              <div class="btn-group">
-                <button class="btn btn-primary" id="editPerson" (click)="showEditPersonModal(editPersonModalTemplate, person)">Edit Person</button>
-                <button class="btn btn-primary" id="updatePersonPhoto" (click)="showEditPersonPhotoModal(editPersonPhotoModalTemplate, person)">Update Photo</button>
+              <div *ngIf="person.interests.length > 0">
+                <h5>Interests</h5>
+                <ul id="{{ 'interests' + person.id}}">
+                  <li *ngFor="let interest of person.interests">
+                    {{ interest.interest }}
+                  </li>
+                </ul>
               </div>
-
-              <!--<div class="btn-group">
-                <button id="editPerson" (click)="showEditPersonModal(editPersonModalTemplate, person)"></button>
-                <a href="#" class="btn btn-primary"><span class="fa fa-2x fa-facebook"></span></a>
-                <a href="#" class="btn btn-danger"><span class="fa fa-2x fa-google"></span></a>
-                <a href="#" class="btn btn-info"><span class="fa fa-2x fa-twitter"></span></a>
-                <a href="#" class="btn btn-primary"><span class="fa fa-2x fa-linkedin"></span></a>
-              </div>-->
             </div>
+            <div class="center">
+              <button class="btn btn-primary" id="editPerson" (click)="showEditPersonModal(editPersonModalTemplate, person)">Edit Person</button>
+              <button class="btn btn-primary" id="updatePersonPhoto" (click)="showEditPersonPhotoModal(editPersonPhotoModalTemplate, person)">Update Photo</button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -151,8 +148,8 @@
         <div style="height: 200">
           <img [src]="url" height="200" />
         </div>
-        <br/>
-        <input type="file" id="photo" accept=".jpg" (change)="onSelectFile($event)" name="photo"/>
+        <br />
+        <input type="file" id="photo" accept=".jpg" (change)="onSelectFile($event)" name="photo" />
         <!--<input type="submit" class="btn btn-primary" (click)="savePersonImage()">/>-->
       </form>
 
@@ -180,4 +177,38 @@
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margins */
   }
+
+  .center {
+    width: 50%;
+    margin: 0 auto
+  }
+
+  .sbl-circ {
+    height: 24px;
+    width: 24px;
+    color: #5a5a5a;
+    position: relative;
+    display: inline-block;
+    border: 5px solid;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: rotate 1s linear infinite;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .child {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
 </style>

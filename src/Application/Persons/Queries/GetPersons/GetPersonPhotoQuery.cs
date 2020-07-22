@@ -25,7 +25,6 @@ namespace PeopleSearch.Application.Persons.Queries.GetPersons
             public async Task<string> Handle(GetPersonPhotoQuery request, CancellationToken cancellationToken)
             {
                 var person = await _context.Persons.FirstOrDefaultAsync(p => p.Id == request.PersonId, cancellationToken: cancellationToken);
-                //return person?.Photo;
 
                 if (person?.Photo != null)
                 {

@@ -30,20 +30,12 @@ namespace PeopleSearch.Application.Persons.Queries.GetPersons
             public async Task<PersonsVm> Handle(GetPersonsQuery request, CancellationToken cancellationToken)
             {
                 var vm = new PersonsVm();
-                try
-                {
-                    vm.Persons = await _context.Persons
-                        .ProjectTo<PersonDto>(_mapper.ConfigurationProvider)
-                        .Where(p => p.FirstName.Contains(request.NameSearch) || p.LastName.Contains(request.NameSearch))
-                        .OrderBy(p => p.LastName)
-                        .ThenBy(p => p.FirstName)
-                        .ToListAsync(cancellationToken);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
+                vm.Persons = await _context.Persons
+                    .ProjectTo<PersonDto>(_mapper.ConfigurationProvider)
+                    .Where(p => p.FirstName.Contains(request.NameSearch) || p.LastName.Contains(request.NameSearch))
+                    .OrderBy(p => p.LastName)
+                    .ThenBy(p => p.FirstName)
+                    .ToListAsync(cancellationToken);
 
                 return vm;
             }

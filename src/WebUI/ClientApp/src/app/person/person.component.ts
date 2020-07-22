@@ -1,5 +1,6 @@
 import { Component, TemplateRef } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { formatDate } from '@angular/common';
 import { PersonsClient, PersonDto, PersonsVm, UpdatePersonCommand, CreatePersonCommand, PersonInterestDto } from '../peoplesearch-api';
 import { faPlus, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
@@ -27,6 +28,7 @@ export class PersonComponent {
   faPlus = faPlus;
   faEllipsisH = faEllipsisH;
 
+  isSearching = false;
 
   searchValue = "";
 
@@ -37,14 +39,19 @@ export class PersonComponent {
   }
 
   search() {
+    this.isSearching = true;
     this.personsClient.get(this.searchValue).subscribe(
       result => {
         this.vm = result;
         for (let i = 0; i < this.vm.persons.length; i++) {
           this.setPhotoUrl(this.vm.persons[i].id);
         }
+        this.isSearching = false;
       },
-      error => console.error(error)
+      error => {
+        console.error(error);
+        this.isSearching = false;
+      }
     );
   }
 
@@ -78,7 +85,7 @@ export class PersonComponent {
       state: person.state,
       zip: person.zip,
       birthDate: person.birthDate
-    }
+    };
     this.editPersonModalRef = this.modalService.show(template);
   }
 
@@ -137,7 +144,17 @@ export class PersonComponent {
     this.personsClient.update(personId, command)
       .subscribe(
         () => {
+
           console.log("Update succeeded.");
+
+          this.selectedPerson.firstName = this.personEditor.firstName;
+          this.selectedPerson.lastName = this.personEditor.lastName;
+          this.selectedPerson.address = this.personEditor.address;
+          this.selectedPerson.city = this.personEditor.city;
+          this.selectedPerson.state = this.personEditor.state;
+          this.selectedPerson.zip = this.personEditor.zip;
+          this.selectedPerson.birthDate = this.personEditor.birthDate;
+
           this.editPersonModalRef.hide();
           this.personEditor = {};
           this.selectedPerson = null;

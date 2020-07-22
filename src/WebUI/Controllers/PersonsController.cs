@@ -71,7 +71,7 @@ namespace PeopleSearch.WebUI.Controllers
         {
             try
             {
-                var photo = await Mediator.Send(new GetPersonPhotoCommand()
+                var photo = await Mediator.Send(new GetPersonPhotoQuery()
                 {
                     PersonId = id
                 });

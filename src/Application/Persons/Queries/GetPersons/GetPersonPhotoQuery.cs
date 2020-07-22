@@ -9,20 +9,20 @@ using PeopleSearch.Application.Common.Interfaces;
 
 namespace PeopleSearch.Application.Persons.Queries.GetPersons
 {
-    public class GetPersonPhotoCommand : IRequest<string>
+    public class GetPersonPhotoQuery : IRequest<string>
     {
         public long PersonId { get; set; }
 
-        public class GetPersonPhotoCommandHandler : IRequestHandler<GetPersonPhotoCommand, string>
+        public class GetPersonPhotoQueryHandler : IRequestHandler<GetPersonPhotoQuery, string>
         {
             private readonly IApplicationDbContext _context;
 
-            public GetPersonPhotoCommandHandler(IApplicationDbContext context)
+            public GetPersonPhotoQueryHandler(IApplicationDbContext context)
             {
                 _context = context;
             }
 
-            public async Task<string> Handle(GetPersonPhotoCommand request, CancellationToken cancellationToken)
+            public async Task<string> Handle(GetPersonPhotoQuery request, CancellationToken cancellationToken)
             {
                 var person = await _context.Persons.FirstOrDefaultAsync(p => p.Id == request.PersonId, cancellationToken: cancellationToken);
                 //return person?.Photo;

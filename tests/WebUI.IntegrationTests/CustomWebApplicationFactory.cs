@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PeopleSearch.WebUI.IntegrationTests
@@ -120,6 +121,21 @@ namespace PeopleSearch.WebUI.IntegrationTests
                 new TodoItem { Id = 3, Title = "Do many, many things." },
                 new TodoItem { Id = 4, Title = "This thing is done!", Done = true }
             );
+
+            context.Persons.AddRange(
+                new Person()
+                {
+                    Id = 1,
+                    FirstName = "Samplefname",
+                    LastName = "Samplelname",
+                    Address = "Sampleaddr",
+                    City = "Samplecity",
+                    State = "Samplest",
+                    Zip = "Sample12345",
+                    BirthDate = DateTime.Now,
+                    Photo = Encoding.ASCII.GetBytes("somestring")
+
+                });
 
             context.SaveChanges();
         }

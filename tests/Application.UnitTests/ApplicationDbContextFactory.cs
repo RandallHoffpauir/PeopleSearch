@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
+using System.Text;
 
 namespace PeopleSearch.Application.UnitTests.Common
 {
@@ -56,6 +57,28 @@ namespace PeopleSearch.Application.UnitTests.Common
                 new TodoItem { Id = 4, ListId = 1, Title = "Sugar" },
                 new TodoItem { Id = 5, ListId = 1, Title = "Coffee" }
             );
+
+
+            context.Persons.AddRange(
+                new Person()
+                {
+                    Id = 1,
+                    FirstName = "Samplefname",
+                    LastName = "Samplelname",
+                    Address = "Sampleaddr",
+                    City = "Samplecity",
+                    State = "Samplest",
+                    Zip = "Sample12345",
+                    BirthDate = DateTime.Now,
+                    Photo = Encoding.ASCII.GetBytes("somestring")
+                });
+
+            context.PersonInterests.AddRange(
+                new PersonInterest {Interest = "int1", PersonId = 1},
+                new PersonInterest { Interest = "int2", PersonId = 1, },
+                new PersonInterest { Interest = "int3", PersonId = 1 },
+                new PersonInterest { Interest = "int4", PersonId = 1 }
+                );
 
             context.SaveChanges();
         }
